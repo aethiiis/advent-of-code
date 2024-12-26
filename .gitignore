@@ -1,0 +1,7 @@
+# Général
+.idea
+*.txt
+
+# 2024
+2024/aoc
+2024/.benchmarks/
