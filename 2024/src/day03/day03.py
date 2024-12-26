@@ -14,10 +14,9 @@ def part1() -> int:
 
 
 def part2() -> int:
-    nums: list = processing()
     enabled: bool = True
     count: int = 0
-    for couple in nums:
+    for couple in processing():
         if couple == 0:
             enabled = False
         elif couple == 1:
