@@ -53,7 +53,6 @@ def part2():
         path = "src/day" + number
         if (not os.path.exists(path) or
                 not os.path.isfile(os.path.join(path, "input.txt")) or
-                not os.path.isfile(os.path.join(path, "test.txt")) or
                 not os.path.isfile(os.path.join(path, "day" + number + ".py")) or
                 not os.path.isfile(os.path.join(path, "test_day" + number + ".py"))):
             return False
