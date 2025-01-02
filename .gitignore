@@ -5,3 +5,5 @@
 # 2024
 2024/aoc
 2024/.benchmarks/
+2024/.pytest_cache/
+2024/src/day*/__pycache__/
