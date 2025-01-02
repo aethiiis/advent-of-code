@@ -1,5 +1,8 @@
 # Général
+.env
 .idea
+.vscode
+.pytest_cache
 *.txt
 
 # 2024
