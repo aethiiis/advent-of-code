@@ -8,8 +8,7 @@ import (
 
 func processing(filename string) map[int][][]int {
 	games := make(map[int][][]int)
-	text := utils.ReadFile(filename)
-	lines := strings.SplitN(text, "\n", -1)
+	lines := strings.SplitN(utils.ReadFile(filename), "\n", -1)
 	for _, line := range lines {
 		game := strings.Split(line, ": ")
 		id, _ := strconv.Atoi(game[0][5:])

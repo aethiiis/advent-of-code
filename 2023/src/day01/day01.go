@@ -7,9 +7,7 @@ import (
 )
 
 func processing(filename string) []string {
-	text := utils.ReadFile(filename)
-	lines := strings.SplitN(text, "\n", -1)
-	return lines
+	return strings.SplitN(utils.ReadFile(filename), "\n", -1)
 }
 
 func calc(line string) int {

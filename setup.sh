@@ -5,7 +5,7 @@ day=$2
 
 ### YEAR ###
 # Check if year is provided
-if [ -z $year ]
+if [ -z "$year" ]
 then
     echo "Please provide year as argument"
     exit 1
@@ -17,15 +17,15 @@ then
     exit 1
 fi
 # Check if year is less than 2015
-if [ $year -lt 2015 ]
+if [ "$year" -lt 2015 ]
 then
     echo "Year must be greater than 2015"
     exit 1
 fi
 # Check if year directory exists
-if [ ! -d $year ]
+if [ ! -d "$year" ]
 then
-    mkdir $year
+    mkdir "$year"
     echo "Directory $year created"
     
 fi
@@ -45,7 +45,7 @@ then
     echo "EXTENSION=$EXTENSION" >> "$year/properties"
     echo "Information saved in $year/properties"
 fi
-cd "$year/src"
+cd "$year/src" || exit 1
 
 ### UTILS ###
 # Check if utils directory exists
@@ -64,7 +64,7 @@ fi
 
 ### DAY ###
 # Check if day is provided
-if [ -z $day ]
+if [ -z "$day" ]
 then
     echo "Please provide day as argument"
     exit 1
@@ -76,27 +76,27 @@ then
     exit 1
 fi
 # Check if day is less than 1 or greater than 25
-if [ $day -lt 1 ] || [ $day -gt 25 ]
+if [ "$day" -lt 1 ] || [ "$day" -gt 25 ]
 then
     echo "Day must be between 1 and 25"
     exit 1
 fi
 # Assign directory name
-if [ $day -lt 10 ]
+if [ "$day" -lt 10 ]
 then
     dir_name="day0$day"
 else
     dir_name="day$day"
 fi
 # Check if day directory exists
-if [ ! -d $dir_name ]
+if [ ! -d "$dir_name" ]
 then
-    mkdir $dir_name
+    mkdir "$dir_name"
     echo "Directory $dir_name created"
 fi
-cd $dir_name
+cd "$dir_name" || exit 1
 # Check if day directory is empty
-if ! ls $dir_name/* 1> /dev/null 2>&1
+if ! ls "$dir_name"/* 1> /dev/null 2>&1
 then
     # Check if properties file exists
     if [ ! -f "../../properties" ]
