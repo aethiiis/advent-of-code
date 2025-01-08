@@ -6,7 +6,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"unicode"
 )
 
 type Number struct {
@@ -14,9 +13,9 @@ type Number struct {
 	positions []utils.Pos
 }
 
-func processing(filename string) (utils.Grid[rune], []Number, []utils.Pos) {
+func processing(filename string) (utils.Grid[any], []Number, []utils.Pos) {
 	text := utils.ReadFile(filename)
-	grid := utils.GetRuneGridFromString(text)
+	grid := utils.GetGridFromString[rune](text, "\n", "")
 	lines := strings.SplitN(text, "\n", -1)
 	numbers := getNumbers(lines)
 	gears := getGears(lines)
@@ -33,9 +32,9 @@ func getNumbers(lines []string) []Number {
 			number, _ := strconv.Atoi(numbers[i])
 			var pos []utils.Pos
 			for _, p := range positions[i] {
-				pos = append(pos, utils.Pos{X: r, Y: p})
+				pos = append(pos, utils.Pos{R: r, C: p})
 			}
-			pos[1].Y = pos[1].Y - 1
+			pos[1].C = pos[1].C - 1
 			list = append(list, Number{number, pos})
 		}
 	}
@@ -48,7 +47,7 @@ func getGears(lines []string) []utils.Pos {
 	for r, line := range lines {
 		positions := expression.FindAllStringIndex(line, -1)
 		for _, pos := range positions {
-			list = append(list, utils.Pos{X: r, Y: pos[0]})
+			list = append(list, utils.Pos{R: r, C: pos[0]})
 		}
 	}
 	return list
@@ -60,9 +59,9 @@ func part1(filename string) int {
 	for _, number := range numbers {
 		part := false
 		for _, position := range number.positions {
-			neighbours := grid.GetRuneNeighbours(position, true)
+			neighbours := grid.GetNeighbours(position, true)
 			for _, neighbour := range neighbours {
-				if neighbour != '.' && !unicode.IsDigit(neighbour) && neighbour != 13 {
+				if uintNeighbour, ok := neighbour.(uint8); ok && uintNeighbour != 46 && uintNeighbour != 13 && (uintNeighbour > 57 || uintNeighbour < 48) {
 					part = true
 					break
 				}
@@ -82,7 +81,7 @@ GearLoop:
 	for _, gear := range gears {
 		var first Number
 		var second Number
-		neighbours := grid.GetRuneNeighbours(gear, true)
+		neighbours := grid.GetNeighbours(gear, true)
 	NeighboursLoop:
 		for neighbourPosition := range neighbours {
 			for _, number := range numbers {

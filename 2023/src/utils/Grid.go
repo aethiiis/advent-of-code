@@ -1,6 +1,9 @@
 package utils
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
 
 type Pos struct {
 	R, C int
@@ -60,123 +63,77 @@ func (grid Grid[T]) GetDimsFromGrid() Dims {
 	return Dims{Rows: rows, Cols: cols}
 }
 
-func GetGridFromString[T any](text string, sep string) Grid[T] {
-	grid := make(Grid[T])
-	lines := strings.SplitN(text, sep, -1)
-	for r, line := range lines {
-		for c, char := range line {
-			grid[Pos{R: r, C: c}] = int(char)
+func GetGridFromString[T any](text, sep1, sep2 string) Grid[any] {
+	grid := make(Grid[any])
+	var test T
+	lines := strings.SplitN(text, sep1, -1)
+	switch any(test).(type) {
+	case int:
+		for r, line := range lines {
+			values := strings.SplitN(line, sep2, -1)
+			for c, char := range values {
+				grid[Pos{R: r, C: c}], _ = strconv.Atoi(char)
+			}
+		}
+	case rune:
+		for r, line := range lines {
+			values := strings.SplitN(line, sep2, -1)
+			for c, char := range values {
+				grid[Pos{R: r, C: c}] = char[0]
+			}
+		}
+	case bool:
+		for r, line := range lines {
+			values := strings.SplitN(line, sep2, -1)
+			for c, char := range values {
+				if char[0] == '0' {
+					grid[Pos{R: r, C: c}] = false
+				} else {
+					grid[Pos{R: r, C: c}] = true
+				}
+			}
+		}
+	case float64:
+		if sep2 == "" {
+			panic("Can't have empty secondary separator when working with floats")
+		}
+		for r, line := range lines {
+			values := strings.SplitN(line, sep2, -1)
+			for c, char := range values {
+				grid[Pos{R: r, C: c}], _ = strconv.ParseFloat(char, 64)
+			}
 		}
 	}
 	return grid
 }
 
-func (grid Grid[int]) GetIntNeighbours(pos Pos, diag bool) map[Pos]int {
-	neighbours := make(map[Pos]int)
-	if value, ok := grid[Pos{pos.X + 1, pos.Y}]; ok {
-		neighbours[Pos{pos.X + 1, pos.Y}] = value
+func (grid Grid[T]) GetNeighbours(pos Pos, diag bool) map[Pos]T {
+	neighbours := make(map[Pos]T)
+	if value, ok := grid[Pos{pos.R + 1, pos.C}]; ok {
+		neighbours[Pos{pos.R + 1, pos.C}] = value
 	}
-	if value, ok := grid[Pos{pos.X, pos.Y - 1}]; ok {
-		neighbours[Pos{pos.X, pos.Y - 1}] = value
+	if value, ok := grid[Pos{pos.R, pos.C - 1}]; ok {
+		neighbours[Pos{pos.R, pos.C - 1}] = value
 	}
-	if value, ok := grid[Pos{pos.X, pos.Y + 1}]; ok {
-		neighbours[Pos{pos.X, pos.Y + 1}] = value
+	if value, ok := grid[Pos{pos.R, pos.C + 1}]; ok {
+		neighbours[Pos{pos.R, pos.C + 1}] = value
 	}
-	if value, ok := grid[Pos{pos.X - 1, pos.Y}]; ok {
-		neighbours[Pos{pos.X - 1, pos.Y}] = value
+	if value, ok := grid[Pos{pos.R - 1, pos.C}]; ok {
+		neighbours[Pos{pos.R - 1, pos.C}] = value
 	}
 	if diag {
-		if value, ok := grid[Pos{pos.X + 1, pos.Y + 1}]; ok {
-			neighbours[Pos{pos.X + 1, pos.Y + 1}] = value
+		if value, ok := grid[Pos{pos.R + 1, pos.C + 1}]; ok {
+			neighbours[Pos{pos.R + 1, pos.C + 1}] = value
 		}
-		if value, ok := grid[Pos{pos.X - 1, pos.Y - 1}]; ok {
-			neighbours[Pos{pos.X - 1, pos.Y - 1}] = value
+		if value, ok := grid[Pos{pos.R - 1, pos.C - 1}]; ok {
+			neighbours[Pos{pos.R - 1, pos.C - 1}] = value
 		}
-		if value, ok := grid[Pos{pos.X - 1, pos.Y + 1}]; ok {
-			neighbours[Pos{pos.X - 1, pos.Y + 1}] = value
+		if value, ok := grid[Pos{pos.R - 1, pos.C + 1}]; ok {
+			neighbours[Pos{pos.R - 1, pos.C + 1}] = value
 		}
-		if value, ok := grid[Pos{pos.X + 1, pos.Y - 1}]; ok {
-			neighbours[Pos{pos.X + 1, pos.Y - 1}] = value
+		if value, ok := grid[Pos{pos.R + 1, pos.C - 1}]; ok {
+			neighbours[Pos{pos.R + 1, pos.C - 1}] = value
 		}
-	}
-	return neighbours
-}
-
-func GetRuneGridFromList(list [][]rune) Grid[rune] {
-	grid := make(Grid[rune])
-	for r := range list {
-		for c := range list[r] {
-			grid[Pos{X: r, Y: c}] = list[r][c]
-		}
-	}
-	return grid
-}
-
-func GetRuneGridFromString(text string) Grid[rune] {
-	grid := make(Grid[rune])
-	lines := strings.SplitN(text, "\n", -1)
-	for r, line := range lines {
-		for c, char := range line {
-			grid[Pos{r, c}] = char
-		}
-	}
-	return grid
-}
-
-func (grid Grid[rune]) GetRuneNeighbours(pos Pos, diag bool) map[Pos]rune {
-	neighbours := make(map[Pos]rune)
-	if value, ok := grid[Pos{pos.X + 1, pos.Y}]; ok {
-		neighbours[Pos{pos.X + 1, pos.Y}] = value
-	}
-	if value, ok := grid[Pos{pos.X, pos.Y - 1}]; ok {
-		neighbours[Pos{pos.X, pos.Y - 1}] = value
-	}
-	if value, ok := grid[Pos{pos.X, pos.Y + 1}]; ok {
-		neighbours[Pos{pos.X, pos.Y + 1}] = value
-	}
-	if value, ok := grid[Pos{pos.X - 1, pos.Y}]; ok {
-		neighbours[Pos{pos.X - 1, pos.Y}] = value
-	}
-	if diag {
-		if value, ok := grid[Pos{pos.X + 1, pos.Y + 1}]; ok {
-			neighbours[Pos{pos.X + 1, pos.Y + 1}] = value
-		}
-		if value, ok := grid[Pos{pos.X - 1, pos.Y - 1}]; ok {
-			neighbours[Pos{pos.X - 1, pos.Y - 1}] = value
-		}
-		if value, ok := grid[Pos{pos.X - 1, pos.Y + 1}]; ok {
-			neighbours[Pos{pos.X - 1, pos.Y + 1}] = value
-		}
-		if value, ok := grid[Pos{pos.X + 1, pos.Y - 1}]; ok {
-			neighbours[Pos{pos.X + 1, pos.Y - 1}] = value
-		}
-	}
-	return neighbours
-}
-
-func GetBoolGridFromList(list [][]bool) Grid[bool] {
-	grid := make(Grid[bool])
-	for r := range list {
-		for c := range list[r] {
-			grid[Pos{X: r, Y: c}] = list[r][c]
-		}
-	}
-	return grid
-}
-
-func (grid Grid[bool]) GetBoolNeighbours(pos Pos) map[Pos]bool {
-	neighbours := make(map[Pos]bool)
-	if value, ok := grid[Pos{pos.X + 1, pos.Y}]; ok {
-		neighbours[Pos{pos.X + 1, pos.Y}] = value
-	}
-	if value, ok := grid[Pos{pos.X, pos.Y - 1}]; ok {
-		neighbours[Pos{pos.X, pos.Y - 1}] = value
-	}
-	if value, ok := grid[Pos{pos.X, pos.Y + 1}]; ok {
-		neighbours[Pos{pos.X, pos.Y + 1}] = value
-	}
-	if value, ok := grid[Pos{pos.X - 1, pos.Y}]; ok {
-		neighbours[Pos{pos.X - 1, pos.Y}] = value
 	}
 	return neighbours
 }
