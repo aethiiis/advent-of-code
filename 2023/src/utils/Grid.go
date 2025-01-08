@@ -3,27 +3,69 @@ package utils
 import "strings"
 
 type Pos struct {
-	X, Y int
+	R, C int
 }
 
-type Grid[T comparable] map[Pos]T
+type Dims struct {
+	Rows, Cols int
+}
 
-func GetIntGridFromList(list [][]int) Grid[int] {
-	grid := make(Grid[int])
+type Grid[T any] map[Pos]T
+
+func GetGridFromList[T any](list [][]T) Grid[T] {
+	grid := make(Grid[T])
 	for r := range list {
 		for c := range list[r] {
-			grid[Pos{X: r, Y: c}] = list[r][c]
+			grid[Pos{R: r, C: c}] = list[r][c]
 		}
 	}
 	return grid
 }
 
-func GetIntGridFromString(text string) Grid[int] {
-	grid := make(Grid[int])
-	lines := strings.SplitN(text, "\n", -1)
+func GetDefaultGrid[T any](defaultValue T, dims Dims) Grid[T] {
+	grid := make(Grid[T])
+	for r := 0; r < dims.Rows; r++ {
+		for c := 0; c < dims.Cols; c++ {
+			grid[Pos{R: r, C: c}] = defaultValue
+		}
+	}
+	return grid
+}
+
+func (grid Grid[T]) GetListFromGrid() [][]T {
+	dims := grid.GetDimsFromGrid()
+	list := make([][]T, dims.Rows)
+	for i := range list {
+		list[i] = make([]T, dims.Cols)
+	}
+	for r := 0; r < dims.Rows; r++ {
+		for c := 0; c < dims.Cols; c++ {
+			list[r][c] = grid[Pos{R: r, C: c}]
+		}
+	}
+	return list
+}
+
+func (grid Grid[T]) GetDimsFromGrid() Dims {
+	rows := 0
+	cols := 0
+	for pos := range grid {
+		if pos.R > rows {
+			cols = pos.R
+		}
+		if pos.C > cols {
+			rows = pos.C
+		}
+	}
+	return Dims{Rows: rows, Cols: cols}
+}
+
+func GetGridFromString[T any](text string, sep string) Grid[T] {
+	grid := make(Grid[T])
+	lines := strings.SplitN(text, sep, -1)
 	for r, line := range lines {
 		for c, char := range line {
-			grid[Pos{r, c}] = int(char)
+			grid[Pos{R: r, C: c}] = int(char)
 		}
 	}
 	return grid
