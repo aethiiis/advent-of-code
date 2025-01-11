@@ -1,5 +1,9 @@
 package utils
 
+import (
+	"golang.org/x/exp/constraints"
+)
+
 func Map2[T, U any](input []T, f func(T) U) []U {
 	mapped := make([]U, len(input))
 	for i, element := range input {
@@ -106,4 +110,44 @@ func Contains[T comparable](input []T, element T) bool {
 		}
 	}
 	return false
+}
+
+func Min[T constraints.Ordered](input []T, key func(T) T) T {
+	if len(input) == 0 {
+		panic("Slice cannot be empty.")
+	}
+	if key == nil {
+		key = func(x T) T {
+			return x
+		}
+	}
+	minValue := input[0]
+	minKey := key(minValue)
+	for _, x := range input[1:] {
+		if key(x) < minKey {
+			minValue = x
+			minKey = key(minValue)
+		}
+	}
+	return minValue
+}
+
+func Max[T constraints.Ordered](input []T, key func(T) T) T {
+	if len(input) == 0 {
+		panic("Slice cannot be empty.")
+	}
+	if key == nil {
+		key = func(x T) T {
+			return x
+		}
+	}
+	maxValue := input[0]
+	maxKey := key(maxValue)
+	for _, x := range input[1:] {
+		if key(x) < maxKey {
+			maxValue = x
+			maxKey = key(maxValue)
+		}
+	}
+	return maxValue
 }

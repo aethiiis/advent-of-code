@@ -81,7 +81,7 @@ func part2(filename string) int {
 }
 
 func main() {
-	filename := "src/day02/input.txt"
+	filename := "day02/input.txt"
 	println(part1(filename))
 	println(part2(filename))
 }

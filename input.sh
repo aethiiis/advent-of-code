@@ -54,4 +54,4 @@ fi
 ### INPUT ###
 export "$(grep -v '^#' .env | grep '^AOC_COOKIE' | xargs)"
 echo "$AOC_COOKIE"
-curl --cookie session="$AOC_COOKIE" https://adventofcode.com/"$year"/day/"$day"/input > "$year"/src/"$dir_name"/input.txt
+curl --cookie session="$AOC_COOKIE" https://adventofcode.com/"$year"/day/"$day"/input | head -c -1 > "$year"/src/"$dir_name"/input.txt

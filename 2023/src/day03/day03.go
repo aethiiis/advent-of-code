@@ -108,7 +108,7 @@ GearLoop:
 }
 
 func main() {
-	filename := "src/day03/input.txt"
+	filename := "day03/input.txt"
 	fmt.Println(part1(filename))
 	fmt.Println(part2(filename))
 }
