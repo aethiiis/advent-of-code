@@ -29,8 +29,6 @@ func processing(filename string) ([]int, [][]IntervalMap) {
 			numbers := utils.Map2(strings.SplitN(line, " ", -1), func(str string) int {
 				number, err := strconv.Atoi(str)
 				if err != nil {
-					fmt.Println(line)
-					fmt.Println(number)
 					panic(err)
 				}
 				return number

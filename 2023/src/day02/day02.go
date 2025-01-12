@@ -2,6 +2,7 @@ package main
 
 import (
 	"2023/src/utils"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -82,6 +83,6 @@ func part2(filename string) int {
 
 func main() {
 	filename := "day02/input.txt"
-	println(part1(filename))
-	println(part2(filename))
+	fmt.Println(part1(filename))
+	fmt.Println(part2(filename))
 }
