@@ -12,10 +12,10 @@ func Map2[T, U any](input []T, f func(T) U) []U {
 	return mapped
 }
 
-func Reduce[T, U any](input []T, f func(U, T) U, initial U) U {
+func Reduce[T any, U int | float32 | float64 | string](input []T, f func(T) U, initial U) U {
 	acc := initial
 	for _, element := range input {
-		acc = f(acc, element)
+		acc += f(element)
 	}
 	return acc
 }
@@ -48,13 +48,23 @@ func All[T any](input []T, f func(T) bool) bool {
 	return true
 }
 
-func Find[T any](input []T, f func(T) bool, defaultValue T) T {
-	for _, element := range input {
-		if f(element) {
-			return element
+func Find[T comparable](input []T, element T) int {
+	for i, e := range input {
+		if e == element {
+			return i
 		}
 	}
-	return defaultValue
+	return -1
+}
+
+func FindAll[T comparable](input []T, element T) []int {
+	positions := make([]int, 0)
+	for i, e := range input {
+		if e == element {
+			positions = append(positions, i)
+		}
+	}
+	return positions
 }
 
 func Index[T any](input []T, f func(T) bool) int {
@@ -63,7 +73,7 @@ func Index[T any](input []T, f func(T) bool) int {
 			return i
 		}
 	}
-	return -1
+	panic("Element not found")
 }
 
 func Unique[T comparable](input []T) []T {
@@ -150,4 +160,14 @@ func Max[T constraints.Ordered](input []T, key func(T) T) T {
 		}
 	}
 	return maxValue
+}
+
+func Count[T comparable](input []T, element T) int {
+	var count int
+	for _, e := range input {
+		if e == element {
+			count++
+		}
+	}
+	return count
 }
