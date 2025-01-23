@@ -20,6 +20,14 @@ func Reduce[T any, U int | float32 | float64 | string](input []T, f func(T) U, i
 	return acc
 }
 
+func Sum[T int | float32 | float64](input []T) T {
+	var sum T
+	for _, element := range input {
+		sum += element
+	}
+	return sum
+}
+
 func Filter[T any](input []T, f func(T) bool) []T {
 	filtered := make([]T, 0)
 	for _, element := range input {
