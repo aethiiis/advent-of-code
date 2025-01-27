@@ -17,9 +17,7 @@ func processing(filename string) (utils.Grid[any], []Number, []utils.Pos) {
 	text := utils.ReadFile(filename)
 	grid := utils.GetGridFromString[rune](text, "\n", "")
 	lines := strings.SplitN(text, "\n", -1)
-	numbers := getNumbers(lines)
-	gears := getGears(lines)
-	return grid, numbers, gears
+	return grid, getNumbers(lines), getGears(lines)
 }
 
 func getNumbers(lines []string) []Number {

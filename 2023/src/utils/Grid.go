@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -13,7 +14,19 @@ type Dims struct {
 	Rows, Cols int
 }
 
+type Direction struct {
+	Dr, Dc int
+}
+
 type Grid[T any] map[Pos]T
+
+func (p *Pos) Add(other Pos) Pos {
+	return Pos{R: p.R + other.R, C: p.C + other.C}
+}
+
+func (p *Pos) Move(dir Direction) Pos {
+	return Pos{R: p.R + dir.Dr, C: p.C + dir.Dc}
+}
 
 func GetGridFromList[T any](list [][]T) Grid[T] {
 	grid := make(Grid[T])
@@ -33,34 +46,6 @@ func GetDefaultGrid[T any](defaultValue T, dims Dims) Grid[T] {
 		}
 	}
 	return grid
-}
-
-func (grid Grid[T]) GetListFromGrid() [][]T {
-	dims := grid.GetDimsFromGrid()
-	list := make([][]T, dims.Rows)
-	for i := range list {
-		list[i] = make([]T, dims.Cols)
-	}
-	for r := 0; r < dims.Rows; r++ {
-		for c := 0; c < dims.Cols; c++ {
-			list[r][c] = grid[Pos{R: r, C: c}]
-		}
-	}
-	return list
-}
-
-func (grid Grid[T]) GetDimsFromGrid() Dims {
-	rows := 0
-	cols := 0
-	for pos := range grid {
-		if pos.R > rows {
-			cols = pos.R
-		}
-		if pos.C > cols {
-			rows = pos.C
-		}
-	}
-	return Dims{Rows: rows, Cols: cols}
 }
 
 func GetGridFromString[T any](text, sep1, sep2 string) Grid[any] {
@@ -107,33 +92,79 @@ func GetGridFromString[T any](text, sep1, sep2 string) Grid[any] {
 	return grid
 }
 
-func (grid Grid[T]) GetNeighbours(pos Pos, diag bool) map[Pos]T {
+func (grid *Grid[T]) GetListFromGrid() [][]T {
+	dims := grid.GetDimsFromGrid()
+	list := make([][]T, dims.Rows)
+	for i := range list {
+		list[i] = make([]T, dims.Cols)
+	}
+	for r := 0; r < dims.Rows; r++ {
+		for c := 0; c < dims.Cols; c++ {
+			list[r][c] = (*grid)[Pos{R: r, C: c}]
+		}
+	}
+	return list
+}
+
+func (grid *Grid[T]) GetDimsFromGrid() Dims {
+	rows := 0
+	cols := 0
+	for pos := range *grid {
+		if pos.R > rows {
+			rows = pos.R
+		}
+		if pos.C > cols {
+			cols = pos.C
+		}
+	}
+	return Dims{Rows: rows + 1, Cols: cols + 1}
+}
+
+func (grid *Grid[T]) GetNeighbours(pos Pos, diag bool) map[Pos]T {
 	neighbours := make(map[Pos]T)
-	if value, ok := grid[Pos{pos.R + 1, pos.C}]; ok {
+	if value, ok := (*grid)[Pos{pos.R + 1, pos.C}]; ok {
 		neighbours[Pos{pos.R + 1, pos.C}] = value
 	}
-	if value, ok := grid[Pos{pos.R, pos.C - 1}]; ok {
+	if value, ok := (*grid)[Pos{pos.R, pos.C - 1}]; ok {
 		neighbours[Pos{pos.R, pos.C - 1}] = value
 	}
-	if value, ok := grid[Pos{pos.R, pos.C + 1}]; ok {
+	if value, ok := (*grid)[Pos{pos.R, pos.C + 1}]; ok {
 		neighbours[Pos{pos.R, pos.C + 1}] = value
 	}
-	if value, ok := grid[Pos{pos.R - 1, pos.C}]; ok {
+	if value, ok := (*grid)[Pos{pos.R - 1, pos.C}]; ok {
 		neighbours[Pos{pos.R - 1, pos.C}] = value
 	}
 	if diag {
-		if value, ok := grid[Pos{pos.R + 1, pos.C + 1}]; ok {
+		if value, ok := (*grid)[Pos{pos.R + 1, pos.C + 1}]; ok {
 			neighbours[Pos{pos.R + 1, pos.C + 1}] = value
 		}
-		if value, ok := grid[Pos{pos.R - 1, pos.C - 1}]; ok {
+		if value, ok := (*grid)[Pos{pos.R - 1, pos.C - 1}]; ok {
 			neighbours[Pos{pos.R - 1, pos.C - 1}] = value
 		}
-		if value, ok := grid[Pos{pos.R - 1, pos.C + 1}]; ok {
+		if value, ok := (*grid)[Pos{pos.R - 1, pos.C + 1}]; ok {
 			neighbours[Pos{pos.R - 1, pos.C + 1}] = value
 		}
-		if value, ok := grid[Pos{pos.R + 1, pos.C - 1}]; ok {
+		if value, ok := (*grid)[Pos{pos.R + 1, pos.C - 1}]; ok {
 			neighbours[Pos{pos.R + 1, pos.C - 1}] = value
 		}
 	}
 	return neighbours
+}
+
+func (grid *Grid[T]) PrintGrid(tab string) {
+	list := grid.GetListFromGrid()
+	if len(list) == 0 {
+		return
+	}
+	for _, line := range list {
+		for _, item := range line {
+			fmt.Print(item)
+			fmt.Print(tab)
+		}
+		fmt.Println()
+	}
+}
+
+func (grid *Grid[T]) Len() int {
+	return len(*grid)
 }
