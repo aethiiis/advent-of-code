@@ -9,15 +9,13 @@ import (
 func processing(filename string) ([]utils.Pos, []int, []int) {
 	lines := strings.SplitN(utils.ReadFile(filename), "\n", -1)
 	rows, cols := len(lines), len(lines[0])
-	galaxies := make([]utils.Pos, 0)
-	emptyRows, emptyCols := make([]int, rows), make([]int, cols)
+	galaxies, emptyRows, emptyCols := make([]utils.Pos, 0), make([]int, rows), make([]int, cols)
 	for r, line := range lines {
 		for c, ch := range line {
-			pos := utils.Pos{R: r, C: c}
 			if ch == '#' {
+				pos := utils.Pos{R: r, C: c}
 				galaxies = append(galaxies, pos)
-				emptyRows[r] = 1
-				emptyCols[c] = 1
+				emptyRows[r], emptyCols[c] = 1, 1
 			}
 		}
 	}
