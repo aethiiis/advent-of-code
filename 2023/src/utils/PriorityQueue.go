@@ -13,7 +13,7 @@ type PriorityQueue[T any] []*Item[T]
 func (pq *PriorityQueue[T]) Len() int { return len(*pq) }
 
 func (pq *PriorityQueue[T]) Less(i, j int) bool {
-	return (*pq)[i].Priority > (*pq)[j].Priority
+	return (*pq)[i].Priority < (*pq)[j].Priority
 }
 
 func (pq *PriorityQueue[T]) Swap(i, j int) {
