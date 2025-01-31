@@ -162,7 +162,7 @@ func Max[T constraints.Ordered](input []T, key func(T) T) T {
 	maxValue := input[0]
 	maxKey := key(maxValue)
 	for _, x := range input[1:] {
-		if key(x) < maxKey {
+		if key(x) > maxKey {
 			maxValue = x
 			maxKey = key(maxValue)
 		}
